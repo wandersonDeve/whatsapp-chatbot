@@ -24,6 +24,7 @@
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "canvas": "^2.11.2",
     "cron": "^2.3.0",
     "node-cron": "^3.0.2",
     "openai": "^3.2.1",
