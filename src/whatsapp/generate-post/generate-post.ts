@@ -1,16 +1,30 @@
-import axios from 'axios';
+import axios, { Method } from 'axios';
 import { createCanvas, loadImage, registerFont } from 'canvas';
+import { SendToGroupsDto } from '../dtos/send-to-group.dto';
 const path = require('path');
 const fs = require('fs');
 
 const bibleAPI = 'https://www.abibliadigital.com.br/api';
 
-async function getCitacaoBiblica() {
+async function getCitacaoBiblica(data?: SendToGroupsDto) {
   try {
-    const response = await axios.get(`${bibleAPI}/verses/acf/random`);
+    let response: any;
+    if (data) {
+      const { abbrev, chapter, number, version } = data;
+
+      response = await axios.get(
+        `${bibleAPI}/verses/${version}/${abbrev}/${chapter}/${number}`,
+      );
+    } else {
+      response = await axios.get(`${bibleAPI}/verses/acf/random`);
+    }
+
     const citacao = response.data;
+
     const bookAndChapter = `${citacao.book.name} ${citacao.chapter}:${citacao.number}`;
+
     const text = citacao.text;
+
     return { text, bookAndChapter };
   } catch (error) {
     console.error('Erro ao obter a citação bíblica:', error.response);
@@ -48,10 +62,23 @@ async function downloadImagem(url, nomeArquivo) {
 // Função para obter uma imagem aleatória
 async function getImagemAleatoria() {
   try {
-    const response = await axios.get(
-      'https://source.unsplash.com/720x1280/?nature',
-    );
-    const imageUrl = response.request.res.responseUrl;
+    // const response = await axios.get(
+    //   'https://source.unsplash.com/720x1280/?nature',
+    // );
+
+    const options = {
+      method: 'GET' as Method,
+      url: `https://api.unsplash.com/photos/random`,
+      params: {
+        client_id: 'kziduLdkKsDf4cD8MEt2cMPpcWn_VfQYzqQAix7Vb8E',
+        query: 'nature',
+        orientation: 'portrait',
+      },
+    };
+
+    const response = await axios(options);
+
+    const imageUrl = response.data.urls.raw;
     if (!imageUrl) return;
     const nomeArquivo = `${Date.now()}_aleatoria.jpg`;
 
@@ -67,7 +94,7 @@ async function getImagemAleatoria() {
   }
 }
 
-async function adicionarTextoImagem(citacao, autor, caminhoArquivo) {
+async function adicionarTextoImagem(citacao, autor, caminhoArquivo, logo) {
   try {
     const canvas = createCanvas(720, 1280);
     const context = canvas.getContext('2d');
@@ -111,8 +138,10 @@ async function adicionarTextoImagem(citacao, autor, caminhoArquivo) {
     context.font = 'italic 30px Arial';
     context.fillText(autor, canvas.width / 2, autorY);
 
+    const localLogo = logo;
+
     // Adicionar a logo
-    const logoImage = await loadImage('./logo.png');
+    const logoImage = await loadImage(localLogo);
     const logoWidth = 238;
     const logoHeight = 336;
     const logoX = (canvas.width - logoWidth) / 2;
@@ -120,11 +149,10 @@ async function adicionarTextoImagem(citacao, autor, caminhoArquivo) {
     context.drawImage(logoImage, logoX, logoY, logoWidth, logoHeight);
 
     // Salvar a imagem
-    const fileName = `imagem_${Date.now()}.png`;
+    const fileName = `imagem_${Date.now()}-${localLogo}`;
 
     const buffer = canvas.toBuffer('image/png');
     fs.writeFileSync(fileName, buffer, 'base64');
-    fs.promises.unlink(caminhoArquivo);
 
     return fileName;
   } catch (error) {
@@ -133,26 +161,36 @@ async function adicionarTextoImagem(citacao, autor, caminhoArquivo) {
   }
 }
 
-// Função principal para criar um post com citação bíblica e imagem
-export async function criarPost() {
+export async function criarPost(data?: SendToGroupsDto) {
   try {
-    // Obter citação bíblica
-    const { text, bookAndChapter } = await getCitacaoBiblica();
+    const { text, bookAndChapter } = await getCitacaoBiblica(data);
+    console.log('Mensagem: ', text);
     if (!text || !bookAndChapter) return;
 
-    // Obter imagem aleatória
     const caminhoArquivo = await getImagemAleatoria();
+    console.log('Arquivo: ', caminhoArquivo);
     if (!caminhoArquivo) return;
 
-    // Adicionar citação e logo à imagem
-    const outputImage = await adicionarTextoImagem(
-      text,
-      bookAndChapter,
-      caminhoArquivo,
-    );
-    if (!outputImage) return;
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    const logosOptions = data.logo ?? 'logo.png,logo1.png';
+    const logos = logosOptions.split(',');
 
-    return outputImage;
+    const outputImages = [];
+
+    for (const logo of logos) {
+      const outputImage = await adicionarTextoImagem(
+        text,
+        bookAndChapter,
+        caminhoArquivo,
+        logo,
+      );
+      if (!outputImage) return;
+      outputImages.push(outputImage);
+    }
+    fs.promises.unlink(caminhoArquivo);
+    console.log('outputImage: ', outputImages);
+
+    return outputImages;
   } catch (error) {
     console.error('Erro ao criar o post:', error);
     return undefined;

@@ -1,0 +1,19 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3004:3004
+    depends_on:
+      - chrome
+    environment:
+      - CHROME_SANDBOX=false
+  chrome:
+    image: zenika/alpine-chrome:latest
+    volumes:
+      - /dev/shm:/dev/shm
+    cap_add:
+      - SYS_ADMIN
+    command: ["--no-sandbox"]
