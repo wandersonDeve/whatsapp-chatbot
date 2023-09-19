@@ -16,6 +16,9 @@ COPY . .
 
 RUN npm run build
 
+COPY --from=browser /home/node/app/.wwebjs_auth ./
+COPY --from=browser /home/node/app/.wwebjs_cache ./
+
 EXPOSE 3004
 
 CMD [ "node", "dist/main.js" ]""
