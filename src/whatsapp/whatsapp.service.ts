@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as qrcode from 'qrcode-terminal';
 import { Client, LocalAuth, Message, MessageMedia } from 'whatsapp-web.js';
-import * as ytdl from 'ytdl-core';
 import { SendToGroupsDto } from './dtos/send-to-group.dto';
 import { LogoEnum } from './enum/logo.enum';
 import { criarPost } from './generate-post/generate-post';
@@ -15,6 +14,9 @@ export class WhatsappService {
   constructor() {
     this.client = new Client({
       authStrategy: new LocalAuth(),
+      puppeteer: {
+        args: ['--no-sandbox'],
+      },
     });
 
     this.client.on('qr', (qrCode) => {
@@ -27,17 +29,6 @@ export class WhatsappService {
 
     this.client.on('message', async (message: Message | any) => {
       const removeContacts = ['status@broadcast'];
-
-      if (!removeContacts.includes(message.from)) {
-        console.log(message);
-      }
-
-      const hasYoutubeLink =
-        message.body.includes('youtube') || message.body.includes('youtu.be');
-
-      if (hasYoutubeLink) {
-        await this.downloadMusic(message);
-      }
 
       if (removeContacts.includes(message.from)) return;
 
@@ -149,65 +140,33 @@ export class WhatsappService {
       SEND_CONTACT_TWO,
       SEND_CONTACT_THREE,
       MONTE_SIAO,
+      ESCUDO_DA_FE,
+      OBREIROS_LAPA,
     } = process.env;
 
     const groups = {
       'Obreiros Semeando': SEND_CONTACT_ONE,
       'Semeando Para Cristo': SEND_CONTACT_TWO,
       'Grupo Gideões': SEND_CONTACT_THREE,
+      'Obreiros Semeando Lapa': OBREIROS_LAPA,
     };
 
     const dataInfo = data?.filename?.split('-') ?? ['', ''];
 
     if (dataInfo[1] === 'logo1.png') {
       console.log(`ENVIANDO PARA Monte Sião`);
-      await this.client.sendMessage(MONTE_SIAO, data);
+      this.client.sendMessage(MONTE_SIAO, data);
+      this.client.sendMessage(ESCUDO_DA_FE, data);
       console.log(`ENVIADA COM SUCESSO PARA Monte Sião às ${new Date()}`);
     } else {
       for (const groupName in groups) {
         const chatDestino = groups[groupName];
         console.log(`ENVIANDO PARA ${groupName}`);
-        await this.client.sendMessage(chatDestino, data);
+        this.client.sendMessage(chatDestino, data);
         console.log(`ENVIADA COM SUCESSO PARA ${groupName} às ${new Date()}`);
       }
     }
 
     return;
-  }
-
-  async downloadMusic(message: any) {
-    const canonicalUrl = message?._data.canonicalUrl;
-
-    const name = Date.now();
-    const output = `./${name}.mp3`;
-
-    const videoStream = ytdl(canonicalUrl, { quality: 'highestaudio' });
-    const audioStream = fs.createWriteStream(output);
-
-    videoStream.on('error', (error) => {
-      console.error('Erro ao baixar o vídeo:', error);
-    });
-
-    audioStream.on('error', (error) => {
-      console.error('Erro ao escrever o áudio no arquivo:', error);
-    });
-
-    audioStream.on('finish', () => {
-      console.log('Conversão de vídeo para áudio finalizada');
-    });
-
-    videoStream.pipe(audioStream);
-
-    await new Promise((resolve) => setTimeout(resolve, 10000));
-
-    try {
-      const audio = MessageMedia.fromFilePath(output);
-      await this.client.sendMessage(message.from, audio);
-      fs.unlinkSync(output);
-      console.log('Áudio Enviado');
-      return { message: 'POST ENVIADO COM SUCESSO' };
-    } catch (error) {
-      console.log(error);
-    }
   }
 }

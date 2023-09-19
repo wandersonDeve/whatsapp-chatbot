@@ -4,8 +4,6 @@ import { SendToGroupsDto } from '../dtos/send-to-group.dto';
 const path = require('path');
 const fs = require('fs');
 
-const bibleAPI = 'https://www.abibliadigital.com.br/api';
-
 async function getCitacaoBiblica(data?: SendToGroupsDto) {
   try {
     let response: any;
@@ -13,10 +11,10 @@ async function getCitacaoBiblica(data?: SendToGroupsDto) {
       const { abbrev, chapter, number, version } = data;
 
       response = await axios.get(
-        `${bibleAPI}/verses/${version}/${abbrev}/${chapter}/${number}`,
+        `${process.env.BIBLE_URL}/verses/${version}/${abbrev}/${chapter}/${number}`,
       );
     } else {
-      response = await axios.get(`${bibleAPI}/verses/acf/random`);
+      response = await axios.get(`${process.env.BIBLE_URL}/verses/acf/random`);
     }
 
     const citacao = response.data;
@@ -59,18 +57,13 @@ async function downloadImagem(url, nomeArquivo) {
   }
 }
 
-// Função para obter uma imagem aleatória
 async function getImagemAleatoria() {
   try {
-    // const response = await axios.get(
-    //   'https://source.unsplash.com/720x1280/?nature',
-    // );
-
     const options = {
       method: 'GET' as Method,
-      url: `https://api.unsplash.com/photos/random`,
+      url: process.env.IMAGE_URL,
       params: {
-        client_id: 'kziduLdkKsDf4cD8MEt2cMPpcWn_VfQYzqQAix7Vb8E',
+        client_id: process.env.IMAGE_KEY,
         query: 'nature',
         orientation: 'portrait',
       },
