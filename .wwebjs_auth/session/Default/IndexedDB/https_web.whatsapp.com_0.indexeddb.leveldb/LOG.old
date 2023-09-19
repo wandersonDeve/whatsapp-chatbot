@@ -1,0 +1,65 @@
+2023/09/13-09:02:59.293 234e6a Reusing MANIFEST /home/teddy/Documentos/github/Pessoal/whatsapp-chatbot/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-005198
+2023/09/13-09:02:59.293 234e6a Recovering log #5173
+2023/09/13-09:02:59.332 234e6a Reusing old log /home/teddy/Documentos/github/Pessoal/whatsapp-chatbot/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/005173.log 
+2023/09/13-09:03:36.065 234e7b Level-0 table #5202: started
+2023/09/13-09:03:36.090 234e7b Level-0 table #5202: 1203678 bytes OK
+2023/09/13-09:03:36.092 234e7b Delete type=0 #5173
+2023/09/13-09:03:36.095 234e7c Compacting 1@0 + 0@1 files
+2023/09/13-09:03:36.111 234e7c Generated table #5203@0: 13099 keys, 320650 bytes
+2023/09/13-09:03:36.116 234e7c Generated table #5204@0: 1656 keys, 141127 bytes
+2023/09/13-09:03:36.118 234e7c Generated table #5205@0: 16 keys, 1247 bytes
+2023/09/13-09:03:36.118 234e7c Compacted 1@0 + 0@1 files => 463024 bytes
+2023/09/13-09:03:36.120 234e7c compacted to: files[ 0 3 33 0 0 0 0 ]
+2023/09/13-09:03:36.120 234e7c Delete type=2 #5202
+2023/09/13-09:03:36.350 234e7b Compacting 1@1 + 15@2 files
+2023/09/13-09:03:36.395 234e7b Generated table #5206@1: 2268 keys, 2147097 bytes
+2023/09/13-09:03:36.424 234e7b Generated table #5207@1: 2443 keys, 2144638 bytes
+2023/09/13-09:03:36.461 234e7b Generated table #5208@1: 27958 keys, 2248864 bytes
+2023/09/13-09:03:36.500 234e7b Generated table #5209@1: 24629 keys, 2275257 bytes
+2023/09/13-09:03:36.535 234e7b Generated table #5210@1: 28983 keys, 2262698 bytes
+2023/09/13-09:03:36.565 234e7b Generated table #5211@1: 22417 keys, 2255766 bytes
+2023/09/13-09:03:36.580 234e7b Generated table #5212@1: 4297 keys, 1177555 bytes
+2023/09/13-09:03:36.580 234e7b Compacted 1@1 + 15@2 files => 14511875 bytes
+2023/09/13-09:03:36.582 234e7b compacted to: files[ 0 2 25 0 0 0 0 ]
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5179
+2023/09/13-09:03:36.582 234e7b Delete type=2 #4956
+2023/09/13-09:03:36.582 234e7b Delete type=2 #4980
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5178
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5133
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5031
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5180
+2023/09/13-09:03:36.582 234e7b Delete type=2 #4885
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5183
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5006
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5204
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5182
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5161
+2023/09/13-09:03:36.582 234e7b Delete type=2 #4783
+2023/09/13-09:03:36.582 234e7b Delete type=2 #4930
+2023/09/13-09:03:36.582 234e7b Delete type=2 #5181
+2023/09/13-09:03:37.025 234e7d Compacting 1@1 + 11@2 files
+2023/09/13-09:03:37.086 234e7d Generated table #5213@1: 83484 keys, 2233166 bytes
+2023/09/13-09:03:37.123 234e7d Generated table #5214@1: 95652 keys, 2247916 bytes
+2023/09/13-09:03:37.162 234e7d Generated table #5215@1: 101575 keys, 2255030 bytes
+2023/09/13-09:03:37.195 234e7d Generated table #5216@1: 57591 keys, 2460547 bytes
+2023/09/13-09:03:37.221 234e7d Generated table #5217@1: 19919 keys, 2399766 bytes
+2023/09/13-09:03:37.243 234e7d Generated table #5218@1: 27959 keys, 2181723 bytes
+2023/09/13-09:03:37.256 234e7d Generated table #5219@1: 2361 keys, 2146477 bytes
+2023/09/13-09:03:37.266 234e7d Generated table #5220@1: 1238 keys, 2135015 bytes
+2023/09/13-09:03:37.277 234e7d Generated table #5221@1: 1623 keys, 2139316 bytes
+2023/09/13-09:03:37.287 234e7d Generated table #5222@1: 1317 keys, 2142274 bytes
+2023/09/13-09:03:37.289 234e7d Generated table #5223@1: 74 keys, 146830 bytes
+2023/09/13-09:03:37.289 234e7d Compacted 1@1 + 11@2 files => 22488060 bytes
+2023/09/13-09:03:37.293 234e7d compacted to: files[ 0 1 25 0 0 0 0 ]
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5193
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5191
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5195
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5190
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5196
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5197
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5203
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5189
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5160
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5192
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5194
+2023/09/13-09:03:37.293 234e7d Delete type=2 #5188
