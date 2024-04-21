@@ -15,7 +15,6 @@ export class WhatsappService {
   constructor(private messageRepository: MessageRepository) {
     this.client = new Client({
       puppeteer: {
-        headless: false,
         executablePath: '/usr/bin/google-chrome',
         args: ['--no-sandbox'],
       },
