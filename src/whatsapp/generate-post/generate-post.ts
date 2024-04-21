@@ -97,7 +97,7 @@ async function adicionarTextoImagem(citacao, autor, caminhoArquivo, logo) {
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
     // Escurecer a imagem
-    context.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    context.fillStyle = 'rgba(0, 0, 0, 0.5)';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // Configurar a fonte do texto
@@ -154,15 +154,24 @@ async function adicionarTextoImagem(citacao, autor, caminhoArquivo, logo) {
   }
 }
 
-export async function criarPost(data?: SendToGroupsDto) {
+export async function criarPost(
+  data?: SendToGroupsDto,
+  file?: Express.Multer.File,
+) {
   try {
     const { text, bookAndChapter } = await getCitacaoBiblica(data);
     console.log('Mensagem: ', text);
     if (!text || !bookAndChapter) return;
 
-    const caminhoArquivo = await getImagemAleatoria();
-    console.log('Arquivo: ', caminhoArquivo);
-    if (!caminhoArquivo) return;
+    let caminhoArquivo: string;
+    if (file) {
+      caminhoArquivo = `./${file.originalname}`;
+      fs.writeFileSync(caminhoArquivo, file.buffer);
+    } else {
+      caminhoArquivo = (await getImagemAleatoria()) as string;
+      console.log('Arquivo: ', caminhoArquivo);
+      if (!caminhoArquivo) return;
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
     const logosOptions = data.logo ?? 'logo.png,logo1.png';

@@ -2,6 +2,8 @@
 /dist
 /node_modules
 .env
+.wwebjs_auth/
+.wwebjs_cache/
 
 # /.wwebjs_auth
 # /.wwebjs_cache
@@ -37,3 +39,8 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+
+.wwebjs_auth/
+.wwebjs_cache/
+sessions/

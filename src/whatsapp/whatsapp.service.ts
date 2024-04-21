@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as qrcode from 'qrcode-terminal';
@@ -6,44 +5,42 @@ import { Client, LocalAuth, Message, MessageMedia } from 'whatsapp-web.js';
 import { SendToGroupsDto } from './dtos/send-to-group.dto';
 import { LogoEnum } from './enum/logo.enum';
 import { criarPost } from './generate-post/generate-post';
+import { CreateSchedulerDto } from './dtos/create-scheduler.dto';
+import { MessageRepository } from './repository/whatsapp.repository';
 
 @Injectable()
 export class WhatsappService {
   private client: Client;
 
-  constructor() {
+  constructor(private messageRepository: MessageRepository) {
     this.client = new Client({
       authStrategy: new LocalAuth(),
-      puppeteer: {
-        args: ['--no-sandbox'],
+      webVersionCache: {
+        type: 'remote',
+        remotePath:
+          'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
       },
     });
 
     this.client.on('qr', (qrCode) => {
-      qrcode.generate(qrCode, { small: true });
+      qrcode.generate(qrCode, { small: true }, function (qrcode) {
+        console.log(qrcode);
+      });
     });
 
     this.client.on('ready', () => {
       console.log('WhatsApp client is ready!');
     });
 
-    this.client.on('message', async (message: Message | any) => {
+    this.client.on('message', (message: any) => {
       const removeContacts = ['status@broadcast'];
 
       if (removeContacts.includes(message.from)) return;
 
-      const { CONTACT_RECEIVE } = process.env;
-
-      if (message.hasMedia && message.from === CONTACT_RECEIVE) {
-        return this.sendMedia(message);
-      }
-
       const regex = /logo: (.+)\ntema: (.+)/i;
       const matches = message.body.match(regex);
 
-      if (matches) return this.dynamicGenerator(matches, message.from);
-
-      return;
+      if (matches) this.dynamicGenerator(matches, message.from);
     });
 
     this.client.initialize();
@@ -60,9 +57,7 @@ export class WhatsappService {
       fs.writeFileSync(fileName, imagem.data, 'base64');
       await new Promise((resolve) => setTimeout(resolve, 2000));
       const mediaImagem = MessageMedia.fromFilePath(fileName);
-
       await this.sendMessageToGroup(mediaImagem);
-
       fs.unlinkSync(fileName);
       return;
     }
@@ -74,9 +69,7 @@ export class WhatsappService {
         audio.data,
         audio.filename,
       );
-
       await this.sendMessageToGroup(mediaAudio);
-      return;
     }
   }
 
@@ -104,7 +97,6 @@ export class WhatsappService {
     await this.sendMessage(from, mediaImagem as any);
     console.log('DELETANDO :', postToSend[0]);
     fs.promises.unlink(postToSend[0]);
-    return;
   }
 
   async generatePost() {
@@ -114,18 +106,17 @@ export class WhatsappService {
     await this.sendMessageToGroup(mediaImagem);
     fs.promises.unlink(postToSend[0]);
     console.log('POST ENVIADO COM SUCESSO');
-    return;
   }
 
   async sendMessage(phoneNumber: string, message: string) {
-    const chat = await this.client.getChatById(phoneNumber);
+    const contactId = `${phoneNumber}@c.us`;
+    const chat = await this.client.getChatById(contactId);
     return chat.sendMessage(message);
   }
 
-  async sendToGroup(data: SendToGroupsDto) {
-    const postsToSend = await criarPost(data);
+  async sendToGroup(data: SendToGroupsDto, file?: Express.Multer.File) {
+    const postsToSend = await criarPost(data, file);
     if (postsToSend?.length <= 0) return 'Post generate error';
-
     for (const post of postsToSend) {
       const mediaImagem = MessageMedia.fromFilePath(post);
       await this.sendMessageToGroup(mediaImagem);
@@ -142,6 +133,8 @@ export class WhatsappService {
       MONTE_SIAO,
       ESCUDO_DA_FE,
       OBREIROS_LAPA,
+      EBD_ADTC,
+      EDB_SEMEANDO,
     } = process.env;
 
     const groups = {
@@ -149,6 +142,7 @@ export class WhatsappService {
       'Semeando Para Cristo': SEND_CONTACT_TWO,
       'Grupo Gideões': SEND_CONTACT_THREE,
       'Obreiros Semeando Lapa': OBREIROS_LAPA,
+      'EBD Semeando': EDB_SEMEANDO,
     };
 
     const dataInfo = data?.filename?.split('-') ?? ['', ''];
@@ -157,6 +151,7 @@ export class WhatsappService {
       console.log(`ENVIANDO PARA Monte Sião`);
       this.client.sendMessage(MONTE_SIAO, data);
       this.client.sendMessage(ESCUDO_DA_FE, data);
+      this.client.sendMessage(EBD_ADTC, data);
       console.log(`ENVIADA COM SUCESSO PARA Monte Sião às ${new Date()}`);
     } else {
       for (const groupName in groups) {
@@ -166,7 +161,9 @@ export class WhatsappService {
         console.log(`ENVIADA COM SUCESSO PARA ${groupName} às ${new Date()}`);
       }
     }
+  }
 
-    return;
+  async createScheduler(data: CreateSchedulerDto) {
+    await this.messageRepository.save(data);
   }
 }
