@@ -17,6 +17,7 @@ export class WhatsappService {
       puppeteer: {
         headless: false,
         executablePath: '/usr/bin/google-chrome',
+        args: ['--no-sandbox'],
       },
       authStrategy: new LocalAuth(),
       webVersionCache: {
