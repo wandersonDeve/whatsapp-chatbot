@@ -26,11 +26,11 @@ export class WhatsappService {
       },
     });
 
-    this.client.on('qr', (qrCode) => {
-      qrcode.generate(qrCode, { small: true }, function (qrcode) {
-        console.log(qrcode);
-      });
-    });
+    // this.client.on('qr', (qrCode) => {
+    //   qrcode.generate(qrCode, { small: true }, function (qrcode) {
+    //     console.log(qrcode);
+    //   });
+    // });
 
     this.client.on('ready', () => {
       console.log('WhatsApp client is ready!');
@@ -169,5 +169,15 @@ export class WhatsappService {
 
   async createScheduler(data: CreateSchedulerDto) {
     await this.messageRepository.save(data);
+  }
+
+  async qrcode() {
+    return new Promise((resolve, reject) => {
+      this.client.on('qr', (qrCode) => {
+        qrcode.generate(qrCode, { small: true }, function (qr) {
+          resolve(`<pre>${qr}</pre>`);
+        });
+      });
+    });
   }
 }

@@ -22,6 +22,11 @@ export class WhatsappController {
     return this.whatsappService.sendMessage(phoneNumber, message);
   }
 
+  @Get('qrcode')
+  async qrcode() {
+    return this.whatsappService.qrcode();
+  }
+
   @Post('send-group/:version/:abbrev/:chapter/:number')
   @UseInterceptors(
     FileInterceptor('file', {
